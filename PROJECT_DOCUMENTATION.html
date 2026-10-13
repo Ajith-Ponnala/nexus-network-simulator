@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NEXUS — Network Systems Lab Documentation</title>
+  <style>
+    :root {
+      --bg: #090d16;
+      --surface: #0f172a;
+      --surface-elevated: #1e293b;
+      --border: #334155;
+      --accent: #38bdf8;
+      --accent-alt: #818cf8;
+      --success: #34d399;
+      --warning: #fbbf24;
+      --error: #f87171;
+      --text: #f1f5f9;
+      --text-muted: #94a3b8;
+      --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      --mono: "JetBrains Mono", Consolas, "Fira Code", monospace;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: var(--font);
+      line-height: 1.6;
+      padding: 2.5rem 1.5rem;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 3rem;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+    }
+
+    h1, h2, h3, h4 {
+      color: #ffffff;
+      margin-top: 2rem;
+      margin-bottom: 0.75rem;
+      font-weight: 700;
+      line-height: 1.25;
+    }
+
+    h1 {
+      font-size: 2.4rem;
+      margin-top: 0;
+      background: linear-gradient(135deg, var(--accent), var(--accent-alt));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .subtitle {
+      font-size: 1.15rem;
+      color: var(--text-muted);
+      margin-bottom: 1.5rem;
+    }
+
+    .badges {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 0.25rem 0.65rem;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      font-family: var(--mono);
+      background: var(--surface-elevated);
+      border: 1px solid var(--border);
+      color: var(--accent);
+    }
+
+    p { margin-bottom: 1rem; color: #cbd5e1; }
+
+    ul, ol {
+      margin-left: 1.5rem;
+      margin-bottom: 1.25rem;
+      color: #cbd5e1;
+    }
+
+    li { margin-bottom: 0.35rem; }
+
+    code {
+      font-family: var(--mono);
+      background: var(--surface-elevated);
+      color: #38bdf8;
+      padding: 0.15rem 0.4rem;
+      border-radius: 4px;
+      font-size: 0.88em;
+    }
+
+    pre {
+      background: #020617;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem;
+      overflow-x: auto;
+      margin-bottom: 1.25rem;
+    }
+
+    pre code {
+      background: transparent;
+      padding: 0;
+      color: #e2e8f0;
+      font-size: 0.85rem;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1.5rem 0;
+      font-size: 0.9rem;
+    }
+
+    th, td {
+      padding: 0.75rem 1rem;
+      border: 1px solid var(--border);
+      text-align: left;
+    }
+
+    th {
+      background: var(--surface-elevated);
+      color: #ffffff;
+      font-weight: 600;
+    }
+
+    td { background: rgba(15, 23, 42, 0.4); }
+
+    .callout {
+      border-left: 4px solid var(--accent);
+      background: rgba(56, 189, 248, 0.08);
+      padding: 1rem 1.25rem;
+      border-radius: 0 8px 8px 0;
+      margin: 1.5rem 0;
+    }
+
+    .callout-success {
+      border-left-color: var(--success);
+      background: rgba(52, 211, 153, 0.08);
+    }
+
+    hr {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 2.5rem 0;
+    }
+
+    .btn-download {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: linear-gradient(135deg, #0ea5e9, #6366f1);
+      color: #ffffff;
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: 600;
+      margin-top: 1rem;
+      box-shadow: 0 4px 14px rgba(14, 165, 233, 0.35);
+    }
+
+    @media print {
+      body { background: #fff; color: #000; padding: 0; }
+      .container { border: none; box-shadow: none; padding: 0; background: #fff; color: #000; }
+      h1, h2, h3 { color: #000; }
+      p, li { color: #333; }
+      code, pre { background: #f1f5f9; color: #000; border-color: #cbd5e1; }
+      .btn-download { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>NEXUS — Network Systems Lab</h1>
+    <div class="subtitle">Interactive Computer Networks Protocol Simulator & Pedagogical Workbench</div>
+    
+    <div class="badges">
+      <span class="badge">React 19.0</span>
+      <span class="badge">Vite 8.0</span>
+      <span class="badge">Vitest (45/45 Tests Passed)</span>
+      <span class="badge">Computer Networks Lab</span>
+    </div>
+
+    <div class="callout callout-success">
+      <strong>Project Overview:</strong> NEXUS is an interactive network protocol simulation suite demonstrating <strong>Dijkstra Shortest-Path Routing</strong> (Network Layer), <strong>Frame Encapsulation</strong> (Data Link Layer), <strong>CRC Polynomial Division</strong> (Physical Layer Error Detection), and <strong>End-to-End Multi-Hop Message Transmission</strong>.
+    </div>
+
+    <h2>1. Core Features & Architecture</h2>
+    
+    <h3>Physical Topology Editor</h3>
+    <ul>
+      <li><strong>Freely Draggable Routers</strong>: Interactive drag-and-drop node positioning across the SVG canvas with live coordinate updates.</li>
+      <li><strong>Auto-Fitting ViewBox</strong>: Dynamic vector scaling ensures routers R1–R6, link costs, and badges are 100% visible on any screen size.</li>
+      <li><strong>Interactive Link Failure Toggle</strong>: Click any link cost badge to toggle the link between ON (active) and OFF (severed). Dijkstra automatically recalculates backup routes.</li>
+      <li><strong>High-Visibility Roles</strong>: Source router highlighted in emerald green with <code>SRC</code> badge; Destination router highlighted in vibrant orange with <code>DEST</code> and pulsing radar ring.</li>
+    </ul>
+
+    <h3>Protocol Sandbox (Framing & CRC)</h3>
+    <ul>
+      <li><strong>Character Count Framing</strong>: Frame size prefixing and length extraction.</li>
+      <li><strong>Byte Stuffing</strong>: Flag bytes (<code>0x7E</code>) and Escape bytes (<code>0x7D</code>) with automatic byte escaping.</li>
+      <li><strong>Bit Stuffing (HDLC)</strong>: Zero-bit insertion after five consecutive <code>1</code>s (<code>0111110</code> pattern).</li>
+      <li><strong>Modulo-2 CRC Binary Division</strong>: Modulo-2 binary long division with bitwise XOR math.</li>
+      <li><strong>Polynomial Presets</strong>: CRC-3 (<code>1011</code>), CRC-4 (<code>10011</code>), CRC-8, CRC-16, and custom binary divisors.</li>
+      <li><strong>Controlled Noise Injection</strong>: Interactive bit flipper demonstrating non-zero remainder error detection.</li>
+      <li><strong>Bitwise XOR Trace Table</strong>: Collapsible step-by-step division trace.</li>
+    </ul>
+
+    <h3>Transmission Simulator</h3>
+    <ul>
+      <li><strong>End-to-End Multi-Hop Orchestration</strong>: Packet chunking, hop-by-hop framing, CRC generation, link transit, and destination reassembly.</li>
+      <li><strong>Live In-Flight HUD Banner</strong>: Real-time hop banner showing active router link, packet index, and wire noise status.</li>
+      <li><strong>1-Click Guided Scenarios</strong>: Clean Transmission, CRC Catches Noise (Drop at R2), Multi-Packet Chunking, and Flag Collision Escaping.</li>
+      <li><strong>Playback Controls</strong>: Play, Pause, Step Forward, Step Backward, Reset, Timeline Scrubber, and Speed controls (0.5x, 1.0x, 2.0x).</li>
+      <li><strong>Categorized Event Log</strong>: Filter tabs (All, Hops, Drops & Errors, Verified) and visual codeword bit-flip chip highlights.</li>
+      <li><strong>Reassembled Payload Validation</strong>: Reconstructs message payload at destination and verifies 100% data integrity.</li>
+    </ul>
+
+    <hr>
+
+    <h2>2. Quick Start & Execution</h2>
+    <p>To run this project on any system with Node.js installed:</p>
+
+    <pre><code># 1. Unzip the project folder and open a terminal inside it
+cd nexus-network-simulator
+
+# 2. Install dependencies
+npm install
+
+# 3. Launch local development server
+npm run dev
+
+# 4. Run automated unit tests
+npm run test</code></pre>
+
+    <hr>
+
+    <h2>3. Automated Test Verification</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Test Suite</th>
+          <th>Tests Passed</th>
+          <th>What It Validates</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>tests/crc.test.js</code></td>
+          <td>13 / 13 Passed</td>
+          <td>Modulo-2 polynomial division, codeword generation, and bit error detection</td>
+        </tr>
+        <tr>
+          <td><code>tests/framing.test.js</code></td>
+          <td>11 / 11 Passed</td>
+          <td>Character count, Byte stuffing escape sequences, HDLC bit stuffing</td>
+        </tr>
+        <tr>
+          <td><code>tests/graph.test.js</code></td>
+          <td>7 / 7 Passed</td>
+          <td>TopologyModel node/edge mutations, edge disabling, adjacency matrix</td>
+        </tr>
+        <tr>
+          <td><code>tests/dijkstra.test.js</code></td>
+          <td>7 / 7 Passed</td>
+          <td>Shortest-path discovery, alternate routing on link failure, cycle prevention</td>
+        </tr>
+        <tr>
+          <td><code>tests/transmission.test.js</code></td>
+          <td>7 / 7 Passed</td>
+          <td>End-to-end multi-hop simulation, packet chunking, and wire noise drops</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <hr>
+
+    <h2>4. Repository Structure</h2>
+    <pre><code>src/
+├── core/
+│   ├── algorithms/
+│   │   ├── dijkstra.js        # Dijkstra routing algorithm
+│   │   ├── framing.js         # Byte/bit stuffing and character count
+│   │   └── crc.js             # Modulo-2 binary polynomial division
+│   └── models/
+│       └── graph.js           # TopologyModel graph representation
+├── simulation/
+│   └── transmission.js        # Multi-hop orchestration engine
+├── hooks/
+│   └── useTopology.js         # React topology state management
+├── components/
+│   ├── NetworkGraph/          # SVG drag-and-drop canvas with auto-fitting viewBox
+│   ├── TopologyEditor/        # Physical network designer & Dijkstra route runner
+│   ├── ProtocolSandbox/       # Unified framing & CRC workbench
+│   └── SimulationPanel/       # Transmission controls, presets, HUD, and logs
+├── App.jsx                    # Root tab layout and active views
+└── index.css                  # Modern technical design system tokens</code></pre>
+  </div>
+</body>
+</html>
