@@ -245,8 +245,3 @@ nexus-network-simulator/
 
 ---
 
-## 👥 Authors & Acknowledgments
-
-- **Lead Developer**: Ajith Reddy Ponnala ([@Ajith-Ponnala](https://github.com/Ajith-Ponnala))
-- **Course**: Computer Networks Systems & Laboratory (CBP)
-- **Institution**: Computer Science & Engineering
