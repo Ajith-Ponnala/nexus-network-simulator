@@ -6,12 +6,16 @@ import {
   Layers, 
   ShieldAlert, 
   Play,
-  BookOpen
+  BookOpen,
+  ArrowRight,
+  CheckCircle2,
+  XCircle,
+  Radio,
+  Sparkles
 } from 'lucide-react';
 import NetworkGraph from './components/NetworkGraph/NetworkGraph';
 import TopologyEditor from './components/TopologyEditor/TopologyEditor';
-import FramingPanel from './components/SimulationPanel/FramingPanel';
-import CRCPanel from './components/SimulationPanel/CRCPanel';
+import ProtocolSandbox from './components/ProtocolSandbox/ProtocolSandbox';
 import TransmissionPanel from './components/SimulationPanel/TransmissionPanel';
 import TransmissionLog from './components/SimulationPanel/TransmissionLog';
 import { useTopology } from './hooks/useTopology';
@@ -49,8 +53,13 @@ export default function App() {
     setCurrentEvent(current);
   };
   
-  const simEdges = currentEvent?.type === 'TRANSMIT' ? [`${[currentEvent.from, currentEvent.to].sort().join('-')}`] : [];
-  const activeEdges = routeResult?.edges || simEdges;
+  const simActiveHop = (currentEvent?.from && currentEvent?.to) 
+    ? [`${[currentEvent.from, currentEvent.to].sort().join('-')}`] 
+    : [];
+
+  const activeEdges = activeView === 'simulation' 
+    ? (simActiveHop.length > 0 ? simActiveHop : (routeResult?.edges || []))
+    : (routeResult?.edges || []);
 
   // View components
   const renderOverview = () => (
@@ -99,6 +108,7 @@ export default function App() {
             destNode={destNode}
             currentEvent={currentEvent}
             onNodePositionChange={topology.updateNodePosition}
+            onToggleEdge={topology.toggleEdge}
           />
         </div>
       </div>
@@ -120,58 +130,124 @@ export default function App() {
     </div>
   );
 
-  const renderSimulation = () => (
-    <div className="fade-in split-layout">
-      <div className="split-main" style={{ gap: '1.5rem' }}>
-        <div className="surface" style={{ flex: 1.5 }}>
-          <div className="surface-header">
-            <span className="surface-title"><Network size={18}/> Active Transmission</span>
+  const renderSimulation = () => {
+    let actionDesc = "Simulation idle. Select an educational preset or configure parameters on the right and click Generate Simulation.";
+    let statusTheme = "idle";
+
+    if (currentEvent) {
+      if (currentEvent.type === 'TRANSMIT') {
+        actionDesc = `Transmitting Packet #${currentEvent.packetIndex + 1} across physical link ${currentEvent.from} ➔ ${currentEvent.to}`;
+        statusTheme = currentEvent.wasCorrupted ? "corrupted" : "transmitting";
+      } else if (currentEvent.type === 'DROP') {
+        actionDesc = `Frame rejected and dropped at Router ${currentEvent.at} due to CRC checksum mismatch!`;
+        statusTheme = "dropped";
+      } else if (currentEvent.type === 'HOP_SUCCESS') {
+        actionDesc = `CRC verified with zero remainder at Router ${currentEvent.at}. Frame accepted for next hop.`;
+        statusTheme = "success";
+      } else if (currentEvent.type === 'PACKET_DELIVERED') {
+        actionDesc = `Packet #${currentEvent.packetIndex + 1} reached Destination Router ${currentEvent.at}!`;
+        statusTheme = "delivered";
+      } else if (currentEvent.type === 'PACKET_START') {
+        actionDesc = `Beginning transmission of Packet #${currentEvent.packetIndex + 1}.`;
+        statusTheme = "info";
+      } else if (currentEvent.type === 'HOP_START') {
+        actionDesc = `Preparing Link Layer hop ${currentEvent.from} ➔ ${currentEvent.to}.`;
+        statusTheme = "info";
+      } else if (currentEvent.type === 'SIMULATION_END') {
+        actionDesc = currentEvent.message;
+        statusTheme = currentEvent.success ? "success" : "dropped";
+      } else if (currentEvent.message) {
+        actionDesc = currentEvent.message;
+        statusTheme = "info";
+      }
+    }
+
+    return (
+      <div className="fade-in split-layout">
+        <div className="split-main" style={{ gap: '1.25rem' }}>
+          <div className="surface" style={{ flex: 1.6, minHeight: '360px', display: 'flex', flexDirection: 'column' }}>
+            <div className="surface-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <span className="surface-title"><Network size={18}/> Active Network Transmission</span>
+              {currentEvent && (
+                <span className={`sim-badge-tag tag-${statusTheme}`}>
+                  {currentEvent.type}
+                </span>
+              )}
+            </div>
+
+            {/* In-Flight HUD Banner */}
+            <div className={`transmission-hud-banner theme-${statusTheme}`}>
+              <div className="hud-banner-main">
+                <div className="hud-status-icon">
+                  {statusTheme === 'corrupted' && <ShieldAlert size={20} color="#ef4444" />}
+                  {statusTheme === 'dropped' && <XCircle size={20} color="#ef4444" />}
+                  {statusTheme === 'transmitting' && <Radio size={20} color="#0ea5e9" className="pulse-icon" />}
+                  {statusTheme === 'success' && <CheckCircle2 size={20} color="#10b981" />}
+                  {statusTheme === 'delivered' && <Sparkles size={20} color="#8b5cf6" />}
+                  {(statusTheme === 'idle' || statusTheme === 'info') && <Activity size={20} color="var(--accent-primary)" />}
+                </div>
+                <div className="hud-status-info">
+                  <div className="hud-status-title">
+                    {actionDesc}
+                  </div>
+                  {currentEvent?.from && currentEvent?.to && (
+                    <div className="hud-hop-route">
+                      <span className="hop-router src">{currentEvent.from}</span>
+                      <ArrowRight size={14} className="hop-arrow" />
+                      <span className="hop-router dst">{currentEvent.to}</span>
+                      {currentEvent.wasCorrupted ? (
+                        <span className="hud-pill noise">⚠ Noise: Bit #{currentEvent.corruptedIndex} Inverted</span>
+                      ) : (
+                        <span className="hud-pill clean">✓ Physical Link Clean</span>
+                      )}
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            <div className="surface-body" style={{ padding: 0, flex: 1, minHeight: '260px', position: 'relative' }}>
+              <NetworkGraph 
+                nodes={nodes} 
+                edges={edges} 
+                highlightedEdges={activeEdges} 
+                sourceNode={sourceNode}
+                destNode={destNode}
+                currentEvent={currentEvent}
+                onNodePositionChange={topology.updateNodePosition}
+                onToggleEdge={topology.toggleEdge}
+              />
+            </div>
           </div>
-          <div className="surface-body" style={{ padding: 0, height: '100%', minHeight: '300px' }}>
-            <NetworkGraph 
-              nodes={nodes} 
-              edges={edges} 
-              highlightedEdges={activeEdges} 
-              sourceNode={sourceNode}
-              destNode={destNode}
-              currentEvent={currentEvent}
-              onNodePositionChange={topology.updateNodePosition}
-            />
+
+          <div className="surface" style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+            <div className="surface-header">
+              <span className="surface-title"><Activity size={18}/> Simulation Event Log</span>
+            </div>
+            <div className="surface-body" style={{ flex: 1, overflowY: 'auto', padding: 0 }}>
+              <TransmissionLog events={displayedEvents} />
+            </div>
           </div>
         </div>
-        <div className="surface" style={{ flex: 1 }}>
-          <div className="surface-header">
-            <span className="surface-title"><Activity size={18}/> Simulation Event Log</span>
+
+        <div className="split-sidebar">
+          <div className="edu-notice">
+            <h4>End-to-End Orchestration</h4>
+            <p>The network layer chunks the payload into packets. The data link layer frames and protects each packet hop-by-hop.</p>
           </div>
-          <div className="surface-body" style={{ height: '100%', overflowY: 'auto', padding: 0 }}>
-            <TransmissionLog events={displayedEvents} />
+          <div className="surface" style={{ flex: 1, overflowY: 'auto' }}>
+            <div className="surface-body">
+              <TransmissionPanel topology={topology} onSimulationUpdate={handleSimulationUpdate} />
+            </div>
           </div>
         </div>
       </div>
-      <div className="split-sidebar">
-        <div className="edu-notice">
-          <h4>End-to-End Orchestration</h4>
-          <p>The network layer chunks the payload into packets. The data link layer frames and protects each packet hop-by-hop.</p>
-        </div>
-        <div className="surface" style={{ flex: 1, overflowY: 'auto' }}>
-          <div className="surface-body">
-            <TransmissionPanel topology={topology} onSimulationUpdate={handleSimulationUpdate} />
-          </div>
-        </div>
-      </div>
-    </div>
-  );
+    );
+  };
 
   const renderSandbox = () => (
-    <div className="fade-in split-layout">
-      <div className="split-main" style={{ gap: '1.5rem', overflowY: 'auto', paddingRight: '1rem' }}>
-        <div className="edu-notice">
-          <h4>Protocol Sandbox</h4>
-          <p>Explore the mathematical mechanics of Framing and CRC in isolation before they are applied to the physical wire.</p>
-        </div>
-        <FramingPanel />
-        <CRCPanel />
-      </div>
+    <div className="fade-in sandbox-container">
+      <ProtocolSandbox />
     </div>
   );
 

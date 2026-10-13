@@ -130,8 +130,15 @@ export default function TopologyEditor({ topology, routeResult, onCalculateRoute
                       className="cost-input"
                       aria-label={`Cost for ${edge.id}`}
                     />
-                    <button type="button" className="toggle-btn" onClick={() => toggleEdge(edge.id)} aria-label={edge.enabled ? 'Disable' : 'Enable'}>
-                      {edge.enabled ? 'On' : 'Off'}
+                    <button 
+                      type="button" 
+                      className={`toggle-btn ${edge.enabled ? 'toggle-on' : 'toggle-off'}`} 
+                      onClick={() => toggleEdge(edge.id)} 
+                      title={edge.enabled ? 'Link is ON — Click to Disable' : 'Link is OFF — Click to Enable'}
+                      aria-label={edge.enabled ? 'Disable' : 'Enable'}
+                    >
+                      <span className="toggle-thumb" />
+                      <span>{edge.enabled ? 'ON' : 'OFF'}</span>
                     </button>
                     <button type="button" className="delete-btn" onClick={() => removeEdge(edge.id)} aria-label={`Delete ${edge.id}`}>×</button>
                   </div>
@@ -151,15 +158,29 @@ export default function TopologyEditor({ topology, routeResult, onCalculateRoute
         <div className="surface-body">
         <div className="form-row">
           <div className="input-group">
-            <label htmlFor="source-node">Source</label>
-            <select id="source-node" value={sourceNode || ''} onChange={(e) => setSourceNode(e.target.value)}>
+            <label htmlFor="source-node">
+              <span className="src-indicator-dot" /> Source
+            </label>
+            <select 
+              id="source-node" 
+              value={sourceNode || ''} 
+              onChange={(e) => setSourceNode(e.target.value)}
+              style={sourceNode ? { borderColor: 'var(--status-success)' } : {}}
+            >
               <option value="" disabled>Select Source</option>
               {nodeIds.map(id => <option key={`src-${id}`} value={id}>{id}</option>)}
             </select>
           </div>
           <div className="input-group">
-            <label htmlFor="dest-node">Destination</label>
-            <select id="dest-node" value={destNode || ''} onChange={(e) => setDestNode(e.target.value)}>
+            <label htmlFor="dest-node">
+              <span className="dest-indicator-dot" /> Destination
+            </label>
+            <select 
+              id="dest-node" 
+              value={destNode || ''} 
+              onChange={(e) => setDestNode(e.target.value)}
+              style={destNode ? { borderColor: 'var(--node-dest)' } : {}}
+            >
               <option value="" disabled>Select Dest</option>
               {nodeIds.map(id => <option key={`dst-${id}`} value={id}>{id}</option>)}
             </select>
